@@ -19,41 +19,8 @@ RUN rm /tmp/powershell.tar.gz
 
 WORKDIR /tmp
 RUN apk add --no-cache --quiet aws-cli
+COPY .aws /home/go/.aws
+RUN chown -R go /home/go/.aws
 
 USER go
 
-RUN mkdir -p ~/.aws
-
-RUN echo "[profile localstack]" >> ~/.aws/config
-RUN echo "region = eu-west-1" >> ~/.aws/config
-RUN echo "output = json" >> ~/.aws/config
-RUN echo "endpoint_url = http://host.docker.internal:4566" >> ~/.aws/config
-RUN echo "[profile development]" > ~/.aws/config
-RUN echo "region = eu-west-1" >> ~/.aws/config
-RUN echo "output = json" >> ~/.aws/config
-RUN echo "endpoint_url = http://host.docker.internal:4566" >> ~/.aws/config
-RUN echo "[profile staging]" > ~/.aws/config
-RUN echo "region = eu-west-1" >> ~/.aws/config
-RUN echo "output = json" >> ~/.aws/config
-RUN echo "endpoint_url = http://host.docker.internal:4566" >> ~/.aws/config
-RUN echo "[profile production]" > ~/.aws/config
-RUN echo "region = eu-west-1" >> ~/.aws/config
-RUN echo "output = json" >> ~/.aws/config
-RUN echo "endpoint_url = http://host.docker.internal:4566" >> ~/.aws/config
-
-RUN echo "[localstack]" >> ~/.aws/credentials
-RUN echo "aws_access_key_id = test" >> ~/.aws/credentials
-RUN echo "aws_secret_access_key = test" >> ~/.aws/credentials
-RUN echo "ignore_configured_endpoint_urls = false" >> ~/.aws/credentials
-RUN echo "[development]" > ~/.aws/credentials
-RUN echo "aws_access_key_id = test" >> ~/.aws/credentials
-RUN echo "aws_secret_access_key = test" >> ~/.aws/credentials
-RUN echo "ignore_configured_endpoint_urls = false" >> ~/.aws/credentials
-RUN echo "[staging]" > ~/.aws/credentials
-RUN echo "aws_access_key_id = test" >> ~/.aws/credentials
-RUN echo "aws_secret_access_key = test" >> ~/.aws/credentials
-RUN echo "ignore_configured_endpoint_urls = false" >> ~/.aws/credentials
-RUN echo "[production]" > ~/.aws/credentials
-RUN echo "aws_access_key_id = test" >> ~/.aws/credentials
-RUN echo "aws_secret_access_key = test" >> ~/.aws/credentials
-RUN echo "ignore_configured_endpoint_urls = false" >> ~/.aws/credentials
