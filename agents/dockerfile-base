@@ -1,0 +1,59 @@
+# Use the official GoCD Alpine agent as the base image
+FROM gocd/gocd-agent-alpine:v25.1.0
+
+USER root
+
+# PowerShell 7.5
+
+WORKDIR /tmp
+RUN apk add --no-cache --quiet ca-certificates less ncurses-terminfo-base krb5-libs libgcc libintl libssl3 libstdc++ tzdata userspace-rcu zlib icu-libs curl
+RUN apk -X https://dl-cdn.alpinelinux.org/alpine/edge/main add --no-cache --quiet lttng-ust openssh-client
+RUN curl -L https://github.com/PowerShell/PowerShell/releases/download/v7.5.0/powershell-7.5.0-linux-musl-x64.tar.gz -o /tmp/powershell.tar.gz
+RUN mkdir -p /opt/microsoft/powershell/7
+RUN tar zxf /tmp/powershell.tar.gz -C /opt/microsoft/powershell/7
+RUN chmod +x /opt/microsoft/powershell/7/pwsh
+RUN ln -s /opt/microsoft/powershell/7/pwsh /usr/bin/pwsh
+RUN rm /tmp/powershell.tar.gz
+
+# AWS
+
+WORKDIR /tmp
+RUN apk add --no-cache --quiet aws-cli
+
+USER go
+
+RUN mkdir -p ~/.aws
+
+RUN echo "[profile localstack]" >> ~/.aws/config
+RUN echo "region = eu-west-1" >> ~/.aws/config
+RUN echo "output = json" >> ~/.aws/config
+RUN echo "endpoint_url = http://host.docker.internal:4566" >> ~/.aws/config
+RUN echo "[profile development]" > ~/.aws/config
+RUN echo "region = eu-west-1" >> ~/.aws/config
+RUN echo "output = json" >> ~/.aws/config
+RUN echo "endpoint_url = http://host.docker.internal:4566" >> ~/.aws/config
+RUN echo "[profile staging]" > ~/.aws/config
+RUN echo "region = eu-west-1" >> ~/.aws/config
+RUN echo "output = json" >> ~/.aws/config
+RUN echo "endpoint_url = http://host.docker.internal:4566" >> ~/.aws/config
+RUN echo "[profile production]" > ~/.aws/config
+RUN echo "region = eu-west-1" >> ~/.aws/config
+RUN echo "output = json" >> ~/.aws/config
+RUN echo "endpoint_url = http://host.docker.internal:4566" >> ~/.aws/config
+
+RUN echo "[localstack]" >> ~/.aws/credentials
+RUN echo "aws_access_key_id = test" >> ~/.aws/credentials
+RUN echo "aws_secret_access_key = test" >> ~/.aws/credentials
+RUN echo "ignore_configured_endpoint_urls = false" >> ~/.aws/credentials
+RUN echo "[development]" > ~/.aws/credentials
+RUN echo "aws_access_key_id = test" >> ~/.aws/credentials
+RUN echo "aws_secret_access_key = test" >> ~/.aws/credentials
+RUN echo "ignore_configured_endpoint_urls = false" >> ~/.aws/credentials
+RUN echo "[staging]" > ~/.aws/credentials
+RUN echo "aws_access_key_id = test" >> ~/.aws/credentials
+RUN echo "aws_secret_access_key = test" >> ~/.aws/credentials
+RUN echo "ignore_configured_endpoint_urls = false" >> ~/.aws/credentials
+RUN echo "[production]" > ~/.aws/credentials
+RUN echo "aws_access_key_id = test" >> ~/.aws/credentials
+RUN echo "aws_secret_access_key = test" >> ~/.aws/credentials
+RUN echo "ignore_configured_endpoint_urls = false" >> ~/.aws/credentials

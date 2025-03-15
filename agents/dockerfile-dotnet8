@@ -1,0 +1,12 @@
+FROM my-gocd-agents/base
+
+USER root
+
+RUN apk add --no-cache --quiet dotnet8-sdk zip
+
+USER go
+
+RUN dotnet tool install --global dotnet-reportgenerator-globaltool
+RUN dotnet tool install --global Amazon.Lambda.Tools
+RUN dotnet tool install --global dotnet-ef
+ENV PATH="$PATH:/home/go/.dotnet/tools"

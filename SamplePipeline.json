@@ -1,0 +1,182 @@
+{
+  "group": "SamplePipelineGroup",
+  "pipeline": {
+    "group": "SamplePipelineGroup",
+    "name": "SamplePipeline",
+    "label_template": "${env:VERSION}",
+    "lock_behavior": "unlockWhenFinished",
+    "template": null,
+    "materials": [
+      {
+        "type": "git",
+        "attributes": {
+          "url": "https://github.com/gocd/gocd.git",
+          "branch": "master",
+          "auto_update": false
+        }
+      }
+    ],
+    "environment_variables": [
+      { "name": "VERSION", "value": "DEFAULT_VALUE" },
+      { "name": "BUILD_ARTIFACT", "value": "DEFAULT_VALUE" },
+      { "name": "RUN_DISPLAY_URL", "value": "DEFAULT_VALUE" },
+      { "name": "GIT_BRANCH", "value": "DEFAULT_VALUE" },
+      { "name": "GIT_COMMIT", "value": "DEFAULT_VALUE" }
+    ],
+    "stages": [
+      {
+        "name": "Validate",
+        "fetch_materials": false,
+        "clean_working_directory": true,
+        "never_cleanup_artifacts": false,
+        "approval": {
+          "type": "manual",
+          "authorization": {
+            "roles": [],
+            "users": []
+          }
+        },
+        "environment_variables": [],
+        "jobs": [
+          {
+            "name": "Validate",
+            "timeout": 0,
+            "environment_variables": [],
+            "tasks": [
+              {
+                "type": "exec",
+                "attributes": {
+                  "command": "bash",
+                  "arguments": [ "-c", "if [ \"$BUILD_ARTIFACT\" = \"DEFAULT_VALUE\" ]; then echo \"BUILD_ARTIFACT is not specified. Failing the job.\" >&2; exit 1; fi" ]
+                }
+              },
+              {
+                "type": "exec",
+                "attributes": {
+                  "command": "bash",
+                  "arguments": [ "-c", "echo \"Branch: $GIT_BRANCH \nCommit: $GIT_COMMIT \nArtifact: $BUILD_ARTIFACT \nBuild Details: $RUN_DISPLAY_URL\"" ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Development",
+        "fetch_materials": true,
+        "clean_working_directory": true,
+        "never_cleanup_artifacts": false,
+        "approval": {
+          "type": "manual",
+          "allow_only_on_success": true,
+          "authorization": {
+            "roles": [],
+            "users": []
+          }
+        },
+        "environment_variables": [
+          { "name": "ENV_ALIAS", "value": "dev" },
+          { "name": "ASPNETCORE_ENVIRONMENT", "value": "Development" }
+        ],
+        "jobs": [
+          {
+            "name": "DeployToDevelopment",
+            "timeout": 0,
+            "environment_variables": [],
+            "tasks": [
+              {
+                "type": "exec",
+                "attributes": {
+                  "run_if": [ "passed" ],
+                  "command": "env",
+                  "arguments": []
+                }
+              },
+              {
+                "type": "exec",
+                "attributes": {
+                  "run_if": [ "passed" ],
+                  "command": "bash",
+                  "arguments": [ "-c", "echo \"Hello from $ENV_ALIAS\"" ]
+                }
+              }
+            ],
+            "artifacts": []
+          }
+        ]
+      },
+      {
+        "name": "Staging",
+        "fetch_materials": false,
+        "clean_working_directory": true,
+        "never_cleanup_artifacts": false,
+        "approval": {
+          "type": "manual",
+          "allow_only_on_success": true,
+          "authorization": {
+            "roles": [],
+            "users": []
+          }
+        },
+        "environment_variables": [
+          { "name": "ENV_ALIAS", "value": "staging" },
+          { "name": "ASPNETCORE_ENVIRONMENT", "value": "Staging" }
+        ],
+        "jobs": [
+          {
+            "name": "DeployToStaging",
+            "timeout": 0,
+            "environment_variables": [],
+            "tasks": [
+              {
+                "type": "exec",
+                "attributes": {
+                  "run_if": [ "passed" ],
+                  "command": "bash",
+                  "arguments": [ "-c", "echo \"Hello from $ENV_ALIAS\"" ]
+                }
+              }
+            ],
+            "artifacts": []
+          }
+        ]
+      },
+      {
+        "name": "Production",
+        "fetch_materials": false,
+        "clean_working_directory": true,
+        "never_cleanup_artifacts": false,
+        "approval": {
+          "type": "manual",
+          "allow_only_on_success": true,
+          "authorization": {
+            "roles": [],
+            "users": []
+          }
+        },
+        "environment_variables": [
+          { "name": "ENV_ALIAS", "value": "prod" },
+          { "name": "ASPNETCORE_ENVIRONMENT", "value": "Production" }
+        ],
+        "jobs": [
+          {
+            "name": "DeployToProduction",
+            "timeout": 0,
+            "environment_variables": [],
+            "tasks": [
+              {
+                "type": "exec",
+                "attributes": {
+                  "run_if": [ "passed" ],
+                  "command": "bash",
+                  "arguments": [ "-c", "echo \"Hello from $ENV_ALIAS\"" ]
+                }
+              }
+            ],
+            "artifacts": []
+          }
+        ]
+      }
+    ]
+  }
+}
